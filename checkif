@@ -1,0 +1,397 @@
+#!/bin/bash
+# Project: LGSM helper by nimimerkki - "checkif"
+#                         Aliases: isempty / canupdate
+# Author: Gargoyle/nimimerkki
+# License: GNU + Copyright (c) 2021 Gargoyle/nimimerkki
+# Purpose: Linux Game Server Management helpy-helper
+
+################################################################
+###
+### USAGE 1: ./checkif --isempty gameserver && ./gameserver restart
+###       2: ./checkif --canupdate gameserver && ./gameserver update
+###   As in: ./checkif --canupdate rustserver && ./rustserver update
+### Will exit with code 0 if server can be updated, and a non-0 if not
+### non-0 = Will prevent the "rest of the commands" (after "&&") to be done. :)
+###
+### USAGE 3: ./isempty gameserver && ./gameserver update
+###   As in: ./isempty rustserver && ./rustserver update
+### Will exit with code 0 if server is empty, and a non-0 if not
+### non-0 = Will prevent the "rest of the commands" (after "&&") to be done. :)
+###
+### USAGE 4: ./canupdate gameserver && ./gameserver update
+###   As in: ./canupdate rustserver && ./rustserver update
+### Will exit with code 0 if server can be updated, and a non-0 if not
+### non-0 = Will prevent the "rest of the commands" (after "&&") to be done. :)
+###
+################################################################
+
+
+### Set Defaults
+#
+myname="$(basename $0)"
+mypath="$(dirname $0)"
+noerrors=false
+verbose=false
+see_files=()
+found_files=()
+see_empty=false
+see_update=false
+update_game=false
+update_mods=false
+step=0
+
+# Set default operation mode based on script name (if applicable)
+if [ "${myname}" == "ifempty" ]; then
+	# Legacy purposes (old name)
+	see_empty=true
+elif [ "${myname}" == "isempty" ]; then
+	see_empty=true
+elif [ "${myname}" == "canupdate" ]; then
+	see_update=true
+fi
+
+test_parameters(){
+  ### Process CommandLine Arguments
+  #
+  local start="Error: Unknown parameter(s): "
+  local result=""
+
+  for param in "$@"
+  do
+    if [ "${param}" == "--help" ]; then
+	print_help
+	exit 22
+    elif [ "${param}" == "-ie" ]||[ "${param}" == "--ifempty" ]||[ "${param}" == "--isempty" ]; then
+	see_empty=true
+    elif [ "${param}" == "-cu" ]||[ "${param}" == "--canupdate" ]; then
+	see_update=true
+    elif [ "${param}" == "--example" ]||[ "${param}" == "--examples" ]; then
+	show_examples
+	exit 22
+    elif [ "${param}" == "-v" ]||[ "${param}" == "--verbose" ]; then
+	verbose=true
+    elif [ "${param}" == "-ne" ]||[ "${param}" == "--noerrors" ]; then
+	noerrors=true
+    elif [ "${param}" == "--updateself" ]; then
+	update_self
+    elif [ "${param}" == "-ug" ]||[ "${param}" == "--updategame" ]; then
+	update_game=true
+    elif [ "${param}" == "-um" ]||[ "${param}" == "--updatemods" ]; then
+	update_mods=true
+    elif [ -f "${param}" ]; then
+	see_files+=($param)
+	#echo -e "Debug: $param"
+    else
+      if [ "${start}" = "" ]; then
+	result+=", ${param}"
+      else
+	result="${start} ${param}"
+        start=""
+      fi
+    fi
+  done
+
+  ((step++))
+  if $verbose; then echo -e "[ Step ${step} ] Processing commandline parameters..."; fi
+
+  if [ "${start}" = "" ]; then
+	if ! $noerrors; then echo -e "${result}"; fi
+  fi
+
+  # is a gameserver/script specified or found?
+  if ((${#see_files[@]} < 1)); then
+    if $verbose; then
+	print_help
+    	if ! $noerrors; then  echo -e "Error: No gameserver defined or found for probing, sorry! "; fi
+    else
+	if ! $noerrors; then  echo -e "Error: No gameserver defined or found for probing, sorry! (try --help ?) "; fi
+    fi
+    exit 22
+  fi
+
+
+} #End-of-ParameterTest
+
+main(){
+  # Do we want to know if there is an update available?
+  if ${see_update}; then
+     ((step++))
+     if $verbose; then echo -e "[ Step ${step} ] Checking if server(s) has/have an update available..."; fi
+     for each in "${found_files[@]}"
+     do
+       check_update_availability $each
+     done
+  fi
+
+  # Do we want to know if the server is empty?
+  if ${see_empty}; then
+     ((step++))
+     if $verbose; then echo -e "[ Step ${step} ] Checking if server(s) is/are empty..."; fi
+
+     for each in "${found_files[@]}"
+     do
+        check_emptyness $each
+     done
+  fi
+
+  # Do we want to update gameserver?
+  if ${update_game}; then
+
+     for each in "${found_files[@]}"
+     do
+        update_game $each
+     done
+  fi
+
+
+
+  # We didn't exit yet?
+  #   = So all is good?
+  #        = ExitCode 0
+  if $verbose; then echo -e "[ RESULT ] All clear, exiting with code (0) = SUCCESS"; fi
+  exit 0
+
+} #End-of-"main"
+
+
+update_self(){
+  echo -e "[ W.I.P. ] --updateself will be completed later!"
+
+  # We have to exit with a non-0, in case user has "&& something" after us!
+  exit 1
+}
+
+update_game(){
+  ((step++))
+  local myname="$(basename $1)"
+  if $verbose; then echo -en "[ Step ${step} ] Updating gameserver: ${myname}... "; fi
+
+  if ${update_mods}; then
+	# We want to update mods as well? More steps!
+	local was_online=$($1 dt 2>&1 | grep -P "Status:  " | grep -Pc "ONLINE")
+
+	$1 stop > /dev/null 2>&1
+	$1 update > /dev/null 2>&1
+	if [ $? -ne 0 ]; then
+	  if $verbose; then echo -e "Failed!"; fi
+	  exit 1
+	fi
+	if $verbose; then echo -en "+Mods... "; fi
+	$1 mods-update > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+	  if $verbose; then echo -e "Done!"; fi
+	else
+	  if $verbose; then echo -e "Failed!"; fi
+	  exit 1
+	fi
+   	if [ "${was_online}" = "1" ]; then
+	  $1 start > /dev/null 2>&1
+	  if [ $? -ne 0 ]; then
+	    if ! $noerrors; then echo -e "Error: Failed to restart ${myname} after updating!"; fi
+	    exit 1
+	  fi
+	fi
+
+  else
+	# No mods-update? Simple!
+	$1 u > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+	  if $verbose; then echo -e "Done!"; fi
+	else
+	  if $verbose; then echo -e "Failed!"; fi
+	  exit 1
+	fi
+  fi
+}
+
+check_deps(){
+   # 1: Make sure it is an LGSM script we're probing?
+   ((step++))
+   if $verbose; then echo -e "[ Step ${step} ] Checking dependencies..."; fi
+   for test_this in "${see_files[@]}"
+   do
+	#echo -e "Debug: $test_this"
+	local lgsm_script="${mypath}/${test_this}"
+	if [ -f "${lgsm_script}" ]; then
+	   lgsm_test $lgsm_script
+	elif [ -f "${test_this}" ]; then
+	   local mypath="$(dirname $test_this)"
+	   local myname="$(basename $test_this)"
+	   lgsm_script="${mypath}/${myname}"
+	   lgsm_test $lgsm_script
+	else
+	   if ! $noerrors; then echo -e "Error: File not found: ${lgsm_script}"; fi
+	   exit 2
+	fi
+   done
+
+
+   # 2: Make sure either see_empty or see_update is set (or both)
+   if ! $see_empty; then
+      if ! $see_update; then
+	# Neither was defined?
+	if ! $noerrors; then echo -e "Error: Operation mode (--isempty or --canupdate) not defined!    "; fi
+	exit 22
+      fi
+   fi
+
+
+   # 3: Make sure that if see_empty = we have gamedig installed!
+   if $see_empty; then
+     if [ "$(command -v gamedig 2>/dev/null)" ]&&[ "$(command -v jq 2>/dev/null)" ]; then
+	if $verbose; then echo -e "         + GameDig & jq detected succesfully        "; fi
+     elif [ "$(command -v jq 2>/dev/null)" ]; then
+	if $verbose; then echo -e "         + jq detected succesfully        "; fi
+	if ! $noerrors; then
+	   echo -e "Error: --isempty requires (otherwise optional) gamedig to be installed!          "
+	   echo -e "For more information see https://docs.linuxgsm.com/requirements/gamedig "
+	fi
+### Debug
+#	exit 22
+	echo -e "Debug: Pretending like nothing is wrong, continuing... "
+     else
+	if ! $noerrors; then
+	   echo -e "Error: --isempty requires (otherwise optional) gamedig to be installed!          "
+	   echo -e "For more information see https://docs.linuxgsm.com/requirements/gamedig "
+	fi
+### Debug
+#	exit 22
+	echo -e "Debug: Pretending like nothing is wrong, continuing... "
+     fi
+   fi
+
+   # 4: If we want to update mods, make sure we also update game! =P duh
+   if ${update_mods}; then
+     if ! ${update_game}; then
+	if ! $noerrors; then echo -e "Error: --updatemods requires --updategame!";fi
+	exit 1
+     fi
+   fi
+
+}
+
+
+check_update_availability(){
+#No update available
+#Update available
+   local can_update=$($1 cu 2>&1 | grep -Fi "update available")
+   local myname=$(basename $1)
+
+   if [ "${can_update}" == "No update available" ]; then
+	if ! $noerrors; then echo -e "       !!! ${myname} has no update available!"; fi
+### Debug
+#	exit 1
+	echo -e "Debug: Pretending like nothing is wrong, continuing... "
+   elif [ "${can_update}" == "Update available" ]; then
+	if $verbose; then echo -e "         + ${myname} could be updated! "; fi
+   else
+	if ! $noerrors; then echo -e "Error: Unable to detect if ${myname} could be updated or not. "; fi
+	exit 1
+   fi
+}
+
+
+check_emptyness(){
+#./rustserver dt | grep -P "(Status:  |Players:  )" | grep -Pc "(OFFLINE|0/)"
+
+   local myname=$(basename $1)
+   local is_empty=$($1 dt 2>&1 | grep -P "(Status:  |Players:  )" | grep -Pc "(OFFLINE|0/)")
+   # Counts OFFLINE server being empty, and also if it has "0/xx" players! :P
+
+   #echo -e "Debug: Proof found of emptyness:${is_empty}/2 (scale=0-2)"
+
+   if [ "${is_empty}" = "0" ]; then
+	if ! $noerrors; then echo -e "       !!! ${myname} is not empty!"; fi
+### Debug
+#	exit 1
+	echo -e "Debug: Pretending like nothing is wrong, continuing... "
+   else
+	if $verbose; then echo -e "         + ${myname} appears to be empty! "; fi
+   fi
+
+}
+
+
+lgsm_test(){
+  if ! [ "$1" = "" ]; then
+    if [ -f "$1" ]; then
+      local lgsm_version=$(bash -c "$1 2>&1 | grep 'LinuxGSM' | grep -Po 'Version v(.+)\$' | cut -c9-")
+
+      if [ ! -z "${lgsm_version}" ]; then
+	local myname="$(basename $1)"
+	if $verbose; then echo -e "         + ${myname} is LGSM (${lgsm_version}) "; fi
+	found_files+=($1)
+      else
+	if ! $noerrors; then echo -e "Error: $1 doesn't appear to be an LGSM script!";fi
+	exit 22
+      fi
+    else
+	if ! $noerrors; then echo -e "Error: $1 not found?";fi
+	exit 2
+    fi
+  fi
+
+}
+
+show_examples(){
+   echo -e "  [ Usage Examples Be Here? ]   "
+
+
+}
+
+
+
+
+print_help(){
+   echo -e " ${myname} USAGE:   ${myname} <options> [gameserver(s)]         \n "
+
+   if [ "${myname}" == "ifempty" ]||[ "${myname}" == "isempty" ]; then
+	echo -e "    By default ${myname} checks if the server is empty. (0)   "
+	echo -e "    If it's not empty, will exit with exitcode (42) instead.  "
+	echo -en "\n"
+	echo -e "    This exitcode (0 or 42) will either allow (0) or prevent (42) the"
+	echo -e "    continuation/follow-up commands, when used with a &&-operator."
+	echo -en "\n"
+	echo -e "    Parameters: -cu | --canupdate  = Also checks if update is available"
+
+   elif [ "${myname}" == "canupdate" ]; then
+	echo -e "    By default ${myname} checks if the server can be updated. (0) "
+	echo -e "    If already up-to-date, will exit with exitcode (42) instead.  "
+	echo -en "\n"
+	echo -e "    This exitcode (0 or 42) will either allow (0) or prevent (42) the"
+	echo -e "    continuation/follow-up commands, when used with a &&-operator."
+	echo -en "\n"
+	echo -e "    Parameters: -ie | --isempty    = Also checks if server is empty"
+
+   else
+	echo -e "    ${myname} will try to check if the server is empty, "
+	echo -e "    can be updated, or both."
+	echo -en "\n"
+	echo -e "    This determines exitcode (0 or 42) that either allows (0) or "
+	echo -e "    prevents (42) continuation/follow-up commands.               "
+	echo -e "    (As in, when used with a &&-operator, on cmdline on cron. )  "
+	echo -en "\n"
+	echo -e "    Parameters: -ie | --isempty    = Checks if server is empty "
+	echo -e "                -cu | --canupdate  = Checks if server can be updated"
+   fi
+
+	echo -e "                      --examples   = Gives a few usage examples"
+	echo -e "                      --help       = Prints this help"
+	echo -en "\n"
+	echo -e "    Behaviour: Silent by default, printing only errors. Can be changed: "
+	echo -e "                -ne | --noerrors   = Supresses printing errors     "
+	echo -e "                -v  | --verbose    = Enables verbose mode          "
+	echo -en "\n"
+	echo -e "                      --updateself = Self-Updates ${myname} "
+	echo -en "\n"
+	echo -e "    Other tricks, only applied if checks (above) allow it: "
+	echo -e "                -ug |  --updategame = Updates the gameserver "
+	echo -e "                -um |  --updatemods = Also does 'mods-update' "
+
+}
+
+test_parameters "$@"
+check_deps
+main
+#Following line should never happen?
+exit 5
