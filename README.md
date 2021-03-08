@@ -27,12 +27,12 @@ Only wanted to do restart **if server was empty?**
 
 ### Installation
 **Basic installation:**
-> copy/paste: `wget -O checkif https://raw.githubusercontent.com/nimimerkki/LGSM-Conditional-Helper/release/checkif && chmod +x checkif` 
+> copy/paste: `wget -O checkif https://git.io/LGSMhelper1 && chmod +x checkif` 
 
 **Advanced installation:**
 > You can rename the script to make it *auto-assume* one or the other fuction:
-> * `--isempty  ` = copy/paste: `wget -O isempty https://raw.githubusercontent.com/nimimerkki/LGSM-Conditional-Helper/release/checkif && chmod +x isempty` 
-> * `--canupdate` = copy/paste: `wget -O canupdate https://raw.githubusercontent.com/nimimerkki/LGSM-Conditional-Helper/release/checkif && chmod +x canupdate` 
+> * `--isempty  ` = copy/paste: `wget -O isempty https://git.io/LGSMhelper1 && chmod +x isempty` 
+> * `--canupdate` = copy/paste: `wget -O canupdate https://git.io/LGSMhelper1 && chmod +x canupdate` 
 
 
 ## 
