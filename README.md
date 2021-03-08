@@ -9,37 +9,30 @@ Only wanted to do restart **if server was empty?**
 
 
 ##
-## !!! WARNING !!!
-> **This is still in DEBUG-MODE, meaning that it will NOT work as you think it would!**
-*(unless you edit the code)*
-
-
-
-##
 ## Features (current and planned)
 - [ ] Has a builtin `--help` & `--examples` to help you!
 - [x] Can ask LGSM if the gameserver has an update available
 - [x] Can ask LGSM if the gameserver is empty (requires gamedig)
 - [x] Can also handle updating the `gameserver` for you (optional)
 - [x] Can also handle updating mods for the `gameserver` for you (optional)
-- [ ] Can `--updateself` to keep itself up-to-date
+- [x] Can `--updateself` to keep itself up-to-date
 
 
 ##
 ## Dependencies & Installation
 ### Dependencies
 * [LGSM](https://github.com/GameServerManagers/LinuxGSM) Of course!
-   * `--ifempty` requires `gamedig` to be installed ([how-to](https://docs.linuxgsm.com/requirements/gamedig))
+   * If you want to use `--ifempty` then (otherwise optional) `gamedig` is required ([how-to](https://docs.linuxgsm.com/requirements/gamedig))
 * Bash but you probably already got that if you got LGSM :P
 
 ### Installation
 **Basic installation:**
-> copy/paste: `wget -O checkif LINKHERE && chmod +x checkif` 
+> copy/paste: `wget -O checkif https://raw.githubusercontent.com/nimimerkki/LGSM-Conditional-Helper/release/checkif && chmod +x checkif` 
 
 **Advanced installation:**
 > You can rename the script to make it *auto-assume* one or the other fuction:
-> * `--isempty  ` = copy/paste: `wget -O isempty LINKHERE && chmod +x isempty` 
-> * `--canupdate` = copy/paste: `wget -O canupdate LINKHERE && chmod +x canupdate` 
+> * `--isempty  ` = copy/paste: `wget -O isempty https://raw.githubusercontent.com/nimimerkki/LGSM-Conditional-Helper/release/checkif && chmod +x isempty` 
+> * `--canupdate` = copy/paste: `wget -O canupdate https://raw.githubusercontent.com/nimimerkki/LGSM-Conditional-Helper/release/checkif && chmod +x canupdate` 
 
 
 ## 
@@ -54,11 +47,12 @@ Depending on your installation (see above), you use either `./checkif`, `./isemp
 | ------------ | --- | :------------ |
 | --isempty    | -ie | Fails if server is not empty (Offline, or 0/xx players) |
 | --canupdate  | -cu | Fails if the server has no update available (LGSM's `-check-update`) |
-| --examples   |     | Prints out usage-examples (some are below as well) |
+| --examples   |     | ~~Prints out usage-examples (some are below as well)~~ |
 | --help       |     | Prints out the *"in-app help"* :upside_down_face: |
 | --noerrors   | -ne | Supresses printing errors (Default = print errors.) |
 | --verbose    | -v  | Prints status & progress on screen (Default = no.) |
-| --updateself |     | *( Not done yet )* |
+| --updateself |     | Updates self, `exitcode 0` if not needed, `non-0` otherwise |
+| --restartgame | -rg | Restarts *the gameserver* |
 | --updategame | -ug | Updates *the gameserver* |
 | --updatemods | -um | Also does a `mods-update` before (re)starting the gameserver (also requires `--updategame` to work) |
 
@@ -70,8 +64,9 @@ Add Commandline examples also?
 ##
 ## Credits
 
-* [LGSM](https://github.com/GameServerManagers/LinuxGSM) & the author of it, [DanGibbs](https://github.com/dgibbs64)
-* Stanley (and other folk) @ [LGSM's Discord](https://linuxgsm.com/discord)
+* [LGSM](https://github.com/GameServerManagers/LinuxGSM) & the author of it, [DanGibbs](https://github.com/dgibbs64) 
+   * LGSM's sourcecode + Google = *Excellent Bash programming guide!* 
+* Stanley (and other folk) @ [LGSM's Discord](https://linuxgsm.com/discord) (Orig.idea, BetaTesting & feedback.)
 * My family for leaving the house for a day and giving me a *Computer Day* :sunglasses:
 
 
@@ -88,4 +83,5 @@ Goals of the project were:
    - [x] `"if empty"           ` = works! (100%)
 
 Overall I'm satisfied.
-And if people use it, *"it has a purpose",* even better! :innocent:
+
+And if people use it = *"It has a purpose"* = **Even better!** :innocent:
