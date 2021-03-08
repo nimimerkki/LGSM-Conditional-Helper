@@ -13,7 +13,7 @@ Only wanted to do restart **if server was empty?**
 - [ ] Has a builtin `--help` & `--examples` to help you!
 - [x] Can ask LGSM if the gameserver has an update available
 - [x] Can ask LGSM if the gameserver is empty (requires gamedig)
-- [x] Can also handle updating the `gameserver` for you (optional)
+- [x] Can also handle updating or restarting the `gameserver` for you (optional)
 - [x] Can also handle updating mods for the `gameserver` for you (optional)
 - [x] Can `--updateself` to keep itself up-to-date
 
