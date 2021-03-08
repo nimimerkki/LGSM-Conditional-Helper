@@ -44,7 +44,7 @@ Typical usage-cases are cronjobs, but works *"manually"* from commandline just a
 
 Depending on your installation (see above), you use either `./checkif`, `./isempty` or `./canupdate`, followed by any `<options>` you'd like, and one or more LGSM gameserver-files. The following commandline parameters & options are available:
 | Parameter   | short | Description |
-| ------------ | --- | ------------ |
+| ------------ | --- | :------------ |
 | --isempty    | -ie | Fails if server is not empty (Offline, or 0/xx players) |
 | --canupdate  | -cu | Fails if the server has no update available (LGSM's `-check-update`) |
 | --examples   |     | Prints out usage-examples (some are below as well) |
