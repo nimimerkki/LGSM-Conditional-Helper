@@ -9,6 +9,13 @@ Only wanted to do restart **if server was empty?**
 
 
 ##
+## !!! WARNING !!!
+> **This is still in DEBUG-MODE, meaning that it will NOT work as you think it would!**
+*(unless you edit the code)*
+
+
+
+##
 ## Features (current and planned)
 - [ ] Has a builtin `--help` & `--examples` to help you!
 - [x] Can ask LGSM if the gameserver has an update available
@@ -63,7 +70,7 @@ Add Commandline examples also?
 ##
 ## Credits
 
-* [LGSM](https://github.com/GameServerManagers/LinuxGSM) & [DanGibbs](https://github.com/dgibbs64)
+* [LGSM](https://github.com/GameServerManagers/LinuxGSM) & the author of it, [DanGibbs](https://github.com/dgibbs64)
 * Stanley (and other folk) @ [LGSM's Discord](https://linuxgsm.com/discord)
 * My family for leaving the house for a day and giving me a *Computer Day* :sunglasses:
 
