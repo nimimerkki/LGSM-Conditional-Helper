@@ -54,7 +54,7 @@ Depending on your installation (see above), you use either `./checkif`, `./isemp
 | --updateself |     | Updates self, `exitcode 0` if not needed, `non-0` otherwise |
 | --restartgame | -rg | Restarts *the gameserver* |
 | --updategame | -ug | Updates *the gameserver* |
-| --updatemods | -um | Also does a `mods-update` before (re)starting the gameserver (also requires `--updategame` to work) |
+| --updatemods | -um | Also does a `mods-update` before (re)starting the gameserver (also requires `-ug` or `-rg` to work) |
 
 ### Other examples:
 TODO: Add Cronjob examples here?
