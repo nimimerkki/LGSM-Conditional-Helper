@@ -52,7 +52,7 @@ If nothing causes a `fail` (such as server not empty, or no update available, or
 
 Typical usage-cases are cronjobs, but works *"manually"* from commandline just as well.
 
-Depending on your installation (see above), you use either `./checkif`, `./isempty` or `./canupdate`, followed by any `<options>` you'd like, and one or more LGSM gameserver-files. The following commandline parameters & options are available:
+Depending on your installation (see above), you use either `./checkif`, `./isempty` or `./canupdate`, followed by any `<options>` you'd like, and one or more LGSM gameserver-files. <br> The following commandline parameters & options are available:
 | Short | Long parameter & Description  |
 | ----- | :---------------------------- |
 | `-ie` | `--isempty`     <br> = Fails if server is not empty (Offline, or 0/xx players) |
@@ -76,7 +76,7 @@ Add Commandline examples also?
 
 * [LGSM](https://github.com/GameServerManagers/LinuxGSM) & the author of it, [DanGibbs](https://github.com/dgibbs64) 
    * LGSM's sourcecode + Google = *Excellent Bash programming guide!* 
-* Stanley (and other folk) @ [LGSM's Discord](https://linuxgsm.com/discord) (Orig.idea *(see Goal #1)*, BetaTesting & feedback.)
+* Stanley (and other folk) @ [LGSM's Discord](https://linuxgsm.com/discord) (Orig.idea *(see `Goal #3`)*, BetaTesting & feedback.)
 * My family for leaving the house for a day and giving me a *Computer Day* :sunglasses:
 
 
