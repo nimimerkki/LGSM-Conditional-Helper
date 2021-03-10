@@ -41,8 +41,9 @@ For an example, only wanted to do a restart **if server was empty?**
 > * `--canupdate` = Copy/paste: `wget -O canupdate https://git.io/LGSMhelper1 && chmod +x canupdate` 
 
 **Updating:**
-A simple *reinstallation* does work as a method of updating, but you can also use:
-> `./checkif --updateself` = will replace itself with the latest copy from GitHub
+> A simple *reinstallation* does work as a method of updating, but you can also use:
+> * `./checkif --updateself` = will replace itself with the latest copy from GitHub
+>   * ~~Checks if newer version is available & only updates if needed~~ *(Coming soon!*)
 
 ## 
 ## Usage & examples
