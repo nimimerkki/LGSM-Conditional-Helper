@@ -91,6 +91,7 @@ Add Commandline examples also?
    - [x] Do it without adding any further depencies (such as perl) = achieved 100%!
    - [x] `"if update available"` = Works! (100%)
    - [x] `"if empty"` = Works! (100%)
+   - [x] `exitcodes` used to natively determine wether to continue with `&&`-chained commands or not
 
 **AfterThoughts:** 
 > Overall I'm satisfied.
