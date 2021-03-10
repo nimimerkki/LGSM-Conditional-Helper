@@ -54,17 +54,17 @@ Typical usage-cases are cronjobs, but works *"manually"* from commandline just a
 
 Depending on your installation (see above), you use either `./checkif`, `./isempty` or `./canupdate`, followed by any `<options>` you'd like, and one or more LGSM gameserver-files. The following commandline parameters & options are available:
 | Short | Long parameter & Description  |
-| ----- | :------------ |
-|  -ie  | --isempty     <br> = Fails if server is not empty (Offline, or 0/xx players) |
-|  -cu  | --canupdate   <br> = Fails if the server has no update available (LGSM's `-check-update`) |
-|       | --examples    <br> = ~~Prints out usage-examples (some are below as well)~~ |
-|       | --help        <br> = Prints out the *"in-app help"* :upside_down_face: |
-|  -ne  | --noerrors    <br> = Supresses printing errors (Default = print errors.) |
-|  -v   | --verbose     <br> = Prints status & progress on screen (Default = no.) |
-|       | --updateself  <br> = Updates self, `exitcode 0` if not needed, `non-0` otherwise |
-|  -rg  | --restartgame <br> = Restarts *the gameserver* |
-|  -ug  | --updategame  <br> = Updates *the gameserver* |
-|  -um  | --updatemods  <br> = Also does a `mods-update` before (re)starting the gameserver (also requires `-ug` or `-rg` to work) |
+| ----- | :---------------------------- |
+| `-ie` | `--isempty`     <br> = Fails if server is not empty (Offline, or 0/xx players) |
+| `-cu` | `--canupdate`   <br> = Fails if the server has no update available (LGSM's `-check-update`) |
+|       | `--examples`    <br> = ~~Prints out usage-examples (some are below as well)~~ |
+|       | `--help`        <br> = Prints out the *"in-app help"* :upside_down_face: |
+| `-ne` | `--noerrors`    <br> = Supresses printing errors (Default = print errors.) |
+| `-v`  | `--verbose`     <br> = Prints status & progress on screen (Default = no.) |
+|       | `--updateself`  <br> = Updates self, `exitcode 0` if not needed, `non-0` otherwise |
+| `-rg` | `--restartgame` <br> = Restarts *the gameserver* |
+| `-ug` | `--updategame`  <br> = Updates *the gameserver* |
+| `-um` | `--updatemods`  <br> = Also does a `mods-update` before (re)starting the gameserver (also requires `-ug` or `-rg` to work) |
 
 ### Other examples:
 TODO: Add Cronjob examples here?
